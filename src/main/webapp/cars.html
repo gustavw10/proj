@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Cars</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <table class="table" id="trHeader">
+            <thead>
+                <tr>
+                    <th id="test">id</th>
+                    <th>year</th>
+                    <th>make</th>
+                    <th>model</th>
+                    <th>price</th>
+                </tr>
+            </thead>
+            <tbody id="values">
+            </tbody>
+        </table>
+
+        <input type="text" id="price" name="price">
+        <button id="filterPrice" onclick="findPrice()">Price less than</button>
+
+        <button id="sortByYear" onclick="sortCars()">Sort by year</button>
+        <script>
+            getCars();
+            var URL = "api/cars/all";
+
+            function getCars(cars) {
+
+                document.getElementById("values").value = "";
+                fetch("api/cars/all")
+                        .then(res => res.json())
+                        .then(data => {
+                            var cars = data.map((c) => {
+                                return "<tr><td>" + c.id + "</td> <td>" + c.year + "</td> <td>" + c.make + "</td> <td>" + c.model + "</td> <td>" + c.price + "</td> </tr>";
+                            })
+                            const joined = cars.join("");
+                            document.getElementById("values").innerHTML = joined;
+                        });
+            }
+
+            function findPrice() {
+                var lowPrice = [];
+                fetch("api/cars/all")
+                        .then(res => res.json())
+                        .then(data => {
+                            data.map((c) => {
+                                if (c.price < document.getElementById("price").value) {
+                                    lowPrice.push(c);
+                                }
+                            })
+                            lowPrice = lowPrice.map((c) => {
+                                return "<tr><td>" + c.id + "</td> <td>" + c.year + "</td> <td>" + c.make + "</td> <td>" + c.model + "</td> <td>" + c.price + "</td> </tr>";
+                            })
+                            const joined = lowPrice.join("");
+                            document.getElementById("values").innerHTML = joined;
+                        }
+                        )
+            }
+
+
+
+            function sortCars() {
+                document.getElementById("values").value = "";
+                var sorted = []
+                fetch(URL)
+                        .then(res => res.json())
+                        .then(data => {
+                            data.map((c) => {
+                                sorted.push(c);
+                            })
+                            sorted.sort((a, b) => a.year - b.year)
+                            document.getElementById("values").innerHTML = sorted.map((c) => {
+                                return "<tr><td>" + c.id + "</td> <td>" + c.year + "</td> <td>" + c.make + "</td> <td>" + c.model + "</td> <td>" + c.price + "</td> </tr>";
+                            }).join("")
+                            console.log(sorted);
+                        })
+            }
+
+
+        </script>
+        <br>
+        <br>
+        <a href="index.html">Tilbage til forsiden</a>
+    </body>
+</html>
